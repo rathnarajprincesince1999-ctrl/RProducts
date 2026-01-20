@@ -1,0 +1,71 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Production builds
+/fronend/dist/
+/fronend/build/
+
+# Backend builds
+/backend/build/
+/backend/out/
+/backend/.gradle/
+/backend/gradle/
+*.jar
+*.war
+*.ear
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Database
+*.db
+*.sqlite
+
+# Uploads
+uploads/
+
+# Temporary files
+tmp/
+temp/
+
+# Cache
+.cache/
+.parcel-cache/
+
+# Coverage reports
+coverage/
+
+# Backup files
+*.bak
+*.backup
+
+# System files
+*.tmp
+*.temp
