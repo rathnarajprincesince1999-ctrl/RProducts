@@ -16,7 +16,13 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
         config.setAllowedOrigins(
-                List.of("http://203.57.85.101", "http://rathnaproducts.store", "http://localhost:5173", "http://localhost:3000")); // frontend
+                List.of(
+                    "http://203.57.85.101", 
+                    "http://rathnaproducts.store", 
+                    "https://rathnaproducts.store",
+                    "http://localhost:5173", 
+                    "http://localhost:3000"
+                )); // frontend
                                                                                                           // domains
         config.addAllowedHeader("*");
         config.addAllowedMethod("*"); // GET, POST, PUT, DELETE, OPTIONS
