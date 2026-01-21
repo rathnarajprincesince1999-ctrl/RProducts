@@ -5,7 +5,6 @@ import Cart from '../components/Cart';
 import { useCart } from '../../../context/CartContext';
 import { useToast } from '../../../context/ToastContext';
 import { useButtonLoading } from '../../../hooks/useButtonLoading';
-import { useBackgroundColor } from '../../../hooks/useBackgroundColor';
 
 const UserHome = () => {
   const [categories, setCategories] = useState([]);
@@ -17,7 +16,6 @@ const UserHome = () => {
   const { addToCart, getCartItemsCount } = useCart();
   const { showToast } = useToast();
   const { isLoading, withLoading } = useButtonLoading();
-  const { backgroundStyle, updateBackgroundColor, resetBackgroundColor } = useBackgroundColor();
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const token = localStorage.getItem('token');
 
@@ -82,7 +80,7 @@ const UserHome = () => {
   }
 
   return (
-    <div className="min-h-screen transition-all duration-500 ease-in-out" style={backgroundStyle}>
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
       <nav className="backdrop-blur-xl bg-white/40 border-b border-white/60 shadow-lg sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-4">
           {/* Mobile Layout */}
@@ -231,8 +229,6 @@ const UserHome = () => {
                   key={product.id} 
                   className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all cursor-pointer group flex-shrink-0 w-40 sm:w-48"
                   onClick={() => window.location.href = `/product/${product.id}`}
-                  onMouseEnter={() => updateBackgroundColor(product.cardColor || '#3B82F6')}
-                  onMouseLeave={resetBackgroundColor}
                   style={{background: `linear-gradient(135deg, ${product.cardColor || '#3B82F6'}20, ${product.cardColor || '#3B82F6'}10)`}}
                 >
                   <div className="aspect-square p-1 sm:p-2">

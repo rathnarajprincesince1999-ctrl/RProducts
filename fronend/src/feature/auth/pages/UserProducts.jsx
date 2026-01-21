@@ -3,7 +3,6 @@ import { API_URL } from '../../../config';
 import { useToast } from '../../../context/ToastContext';
 import { useCart } from '../../../context/CartContext';
 import { useButtonLoading } from '../../../hooks/useButtonLoading';
-import { useBackgroundColor } from '../../../hooks/useBackgroundColor';
 
 const UserProducts = () => {
   const [products, setProducts] = useState([]);
@@ -13,7 +12,6 @@ const UserProducts = () => {
   const { showToast } = useToast();
   const { addToCart } = useCart();
   const { isLoading, withLoading } = useButtonLoading();
-  const { backgroundStyle, updateBackgroundColor, resetBackgroundColor } = useBackgroundColor();
 
   useEffect(() => {
     fetchProducts();
@@ -72,7 +70,7 @@ const UserProducts = () => {
   }
 
   return (
-    <div className="min-h-screen transition-all duration-500 ease-in-out" style={backgroundStyle}>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <nav className="backdrop-blur-xl bg-white/40 border-b border-white/60 shadow-lg">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center gap-4">
@@ -118,8 +116,6 @@ const UserProducts = () => {
               key={product.id} 
               className="backdrop-blur-2xl bg-white/60 p-6 rounded-3xl border-2 border-white/60 shadow-2xl cursor-pointer hover:shadow-3xl hover:scale-105 transition-all duration-300"
               onClick={() => window.location.href = `/product/${product.id}`}
-              onMouseEnter={() => updateBackgroundColor(product.cardColor || '#3B82F6')}
-              onMouseLeave={resetBackgroundColor}
               style={{background: `linear-gradient(135deg, ${product.cardColor || '#3B82F6'}20, ${product.cardColor || '#3B82F6'}10)`}}
             >
               {product.productImageUrl && (
