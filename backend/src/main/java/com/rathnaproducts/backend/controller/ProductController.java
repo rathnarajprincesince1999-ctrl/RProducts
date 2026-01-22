@@ -153,7 +153,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}/multipart")
-    public ResponseEntity<ProductResponse> updateProductMultipart(
+    public ResponseEntity<?> updateProductMultipart(
             @PathVariable Long id,
             @RequestParam("name") String name,
             @RequestParam("description") String description,
@@ -168,21 +168,25 @@ public class ProductController {
             @RequestParam(value = "replacementDays", required = false, defaultValue = "0") Integer replacementDays,
             @RequestParam(value = "cardColor", required = false, defaultValue = "#3B82F6") String cardColor) {
         
-        ProductRequest request = new ProductRequest();
-        request.setName(name);
-        request.setDescription(description);
-        request.setPrice(price);
-        request.setUnit(unit);
-        request.setCategoryId(categoryId);
-        request.setSellerEmail(sellerEmail);
-        request.setReturnable(returnable);
-        request.setReturnDays(returnDays);
-        request.setReplaceable(replaceable);
-        request.setReplacementDays(replacementDays);
-        request.setCardColor(cardColor);
-        
-        ProductResponse response = productService.updateProduct(id, request, productImage);
-        return ResponseEntity.ok(response);
+        try {
+            ProductRequest request = new ProductRequest();
+            request.setName(name);
+            request.setDescription(description);
+            request.setPrice(price);
+            request.setUnit(unit);
+            request.setCategoryId(categoryId);
+            request.setSellerEmail(sellerEmail);
+            request.setReturnable(returnable);
+            request.setReturnDays(returnDays);
+            request.setReplaceable(replaceable);
+            request.setReplacementDays(replacementDays);
+            request.setCardColor(cardColor);
+            
+            ProductResponse response = productService.updateProduct(id, request, productImage);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")

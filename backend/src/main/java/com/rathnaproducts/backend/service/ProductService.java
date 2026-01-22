@@ -58,15 +58,15 @@ public class ProductService {
 
     public ProductResponse createProduct(ProductRequest request, MultipartFile productImage) {
         Product product = new Product();
-        product.setName(request.getName());
-        product.setDescription(request.getDescription());
-        product.setPrice(request.getPrice());
-        product.setUnit(request.getUnit());
-        product.setReturnable(request.getReturnable());
-        product.setReturnDays(request.getReturnDays());
-        product.setReplaceable(request.getReplaceable());
-        product.setReplacementDays(request.getReplacementDays());
-        product.setCardColor(request.getCardColor());
+        if (request.getName() != null) product.setName(request.getName());
+        if (request.getDescription() != null) product.setDescription(request.getDescription());
+        if (request.getPrice() != null) product.setPrice(request.getPrice());
+        if (request.getUnit() != null) product.setUnit(request.getUnit());
+        if (request.getReturnable() != null) product.setReturnable(request.getReturnable());
+        if (request.getReturnDays() != null) product.setReturnDays(request.getReturnDays());
+        if (request.getReplaceable() != null) product.setReplaceable(request.getReplaceable());
+        if (request.getReplacementDays() != null) product.setReplacementDays(request.getReplacementDays());
+        if (request.getCardColor() != null) product.setCardColor(request.getCardColor());
         
         if (request.getProductImageUrl() != null) {
             product.setProductImageUrl(request.getProductImageUrl());
@@ -74,13 +74,13 @@ public class ProductService {
         
         if (request.getCategoryId() != null) {
             Category category = categoryRepository.findById(request.getCategoryId())
-                    .orElseThrow(() -> new RuntimeException("Category not found"));
+                    .orElse(null);
             product.setCategory(category);
         }
         
         if (request.getSellerEmail() != null) {
             Seller seller = sellerRepository.findByEmail(request.getSellerEmail())
-                    .orElseThrow(() -> new RuntimeException("Seller not found"));
+                    .orElse(null);
             product.setSeller(seller);
         }
         
@@ -97,41 +97,58 @@ public class ProductService {
     }
 
     public ProductResponse updateProduct(Long id, ProductRequest request, MultipartFile productImage) {
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
-        
-        product.setName(request.getName());
-        product.setDescription(request.getDescription());
-        product.setPrice(request.getPrice());
-        product.setUnit(request.getUnit());
-        product.setReturnable(request.getReturnable());
-        product.setReturnDays(request.getReturnDays());
-        product.setReplaceable(request.getReplaceable());
-        product.setReplacementDays(request.getReplacementDays());
-        product.setCardColor(request.getCardColor());
-        
-        if (request.getCategoryId() != null) {
-            Category category = categoryRepository.findById(request.getCategoryId())
-                    .orElseThrow(() -> new RuntimeException("Category not found"));
-            product.setCategory(category);
-        }
-        
-        if (request.getSellerEmail() != null) {
-            Seller seller = sellerRepository.findByEmail(request.getSellerEmail())
-                    .orElseThrow(() -> new RuntimeException("Seller not found"));
-            product.setSeller(seller);
-        }
-        
-        if (productImage != null && !productImage.isEmpty()) {
-            try {
-                product.setProductImageUrl(saveImage(productImage));
-            } catch (Exception e) {
-                // Image save failed, continue without image
+        try {
+            Product product = productRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
+            
+            // Only update non-null values, keep existing values for required fields
+            if (request.getName() != null && !request.getName().trim().isEmpty()) {
+                product.setName(request.getName());
             }
+            if (request.getDescription() != null) {
+                product.setDescription(request.getDescription());
+            }
+            if (request.getPrice() != null) {
+                product.setPrice(request.getPrice());
+            }
+            if (request.getUnit() != null) {
+                product.setUnit(request.getUnit());
+            }
+            if (request.getReturnable() != null) {
+                product.setReturnable(request.getReturnable());
+            }
+            if (request.getReturnDays() != null) {
+                product.setReturnDays(request.getReturnDays());
+            }
+            if (request.getReplaceable() != null) {
+                product.setReplaceable(request.getReplaceable());
+            }
+            if (request.getReplacementDays() != null) {
+                product.setReplacementDays(request.getReplacementDays());
+            }
+            if (request.getCardColor() != null && !request.getCardColor().trim().isEmpty()) {
+                product.setCardColor(request.getCardColor());
+            }
+            
+            if (request.getCategoryId() != null) {
+                Category category = categoryRepository.findById(request.getCategoryId())
+                        .orElse(null);
+                product.setCategory(category);
+            }
+            
+            if (productImage != null && !productImage.isEmpty()) {
+                try {
+                    product.setProductImageUrl(saveImage(productImage));
+                } catch (Exception e) {
+                    // Image save failed, continue without image
+                }
+            }
+            
+            Product saved = productRepository.save(product);
+            return mapToResponse(saved);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to update product: " + e.getMessage());
         }
-        
-        Product saved = productRepository.save(product);
-        return mapToResponse(saved);
     }
 
     public void deleteProductBySeller(Long id, String sellerEmail) {

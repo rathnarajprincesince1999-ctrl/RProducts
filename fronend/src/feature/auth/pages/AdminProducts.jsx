@@ -73,9 +73,27 @@ const AdminProducts = () => {
         ? `${API_URL}/products/${editingProduct.id}`
         : `${API_URL}/products`;
       
+      const requestData = editingProduct ? {
+        name: formData.name,
+        description: formData.description,
+        price: parseFloat(formData.price),
+        unit: formData.unit,
+        categoryId: formData.categoryId ? parseInt(formData.categoryId) : null,
+        returnable: formData.returnable,
+        returnDays: formData.returnDays,
+        replaceable: formData.replaceable,
+        replacementDays: formData.replacementDays,
+        cardColor: formData.cardColor
+      } : formDataToSend;
+      
       const response = await fetch(url, {
         method: editingProduct ? 'PUT' : 'POST',
-        body: formDataToSend
+        ...(editingProduct ? {
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(requestData)
+        } : {
+          body: requestData
+        })
       });
 
       if (response.ok) {

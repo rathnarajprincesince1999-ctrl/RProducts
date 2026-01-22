@@ -19,33 +19,34 @@ import ProductDetail from './feature/auth/pages/ProductDetail';
 import CheckoutPage from './feature/auth/pages/CheckoutPage';
 import CategoryPage from './feature/auth/pages/CategoryPage';
 import UserReturns from './feature/auth/pages/UserReturns';
+import ProtectedRoute from './components/ProtectedRoute';
 
 const Router = () => {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<UserPreHome />} />
-        <Route path="/dashboard" element={<UserHome />} />
-        <Route path="/products" element={<UserProducts />} />
-        <Route path="/orders" element={<UserReturns />} />
-        <Route path="/product/:id" element={<ProductDetail />} />
-        <Route path="/checkout" element={<CheckoutPage />} />
-        <Route path="/admin" element={<AdminHome />} />
-        <Route path="/admin/home" element={<AdminHome />} />
-        <Route path="/admin/categories" element={<AdminCategories />} />
-        <Route path="/admin/products" element={<AdminProducts />} />
-        <Route path="/admin/users" element={<AdminUsers />} />
-        <Route path="/admin/sellers" element={<AdminSellers />} />
-        <Route path="/admin/orders" element={<AdminOrders />} />
-        <Route path="/admin/revenue" element={<AdminRevenue />} />
-        <Route path="/admin/returns" element={<AdminReturns />} />
-        <Route path="/seller" element={<SellerHome />} />
-        <Route path="/seller/products" element={<SellerProducts />} />
-        <Route path="/seller/orders" element={<SellerOrders />} />
-        <Route path="/seller/revenue" element={<SellerRevenue />} />
-        <Route path="/seller/returns" element={<SellerReturns />} />
-        <Route path="/category/:categoryId" element={<CategoryPage />} />
-        <Route path="/returns" element={<UserReturns />} />
+        <Route path="/dashboard" element={<ProtectedRoute><UserHome /></ProtectedRoute>} />
+        <Route path="/products" element={<ProtectedRoute><UserProducts /></ProtectedRoute>} />
+        <Route path="/orders" element={<ProtectedRoute><UserReturns /></ProtectedRoute>} />
+        <Route path="/product/:id" element={<ProtectedRoute><ProductDetail /></ProtectedRoute>} />
+        <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
+        <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><AdminHome /></ProtectedRoute>} />
+        <Route path="/admin/home" element={<ProtectedRoute requiredRole="admin"><AdminHome /></ProtectedRoute>} />
+        <Route path="/admin/categories" element={<ProtectedRoute requiredRole="admin"><AdminCategories /></ProtectedRoute>} />
+        <Route path="/admin/products" element={<ProtectedRoute requiredRole="admin"><AdminProducts /></ProtectedRoute>} />
+        <Route path="/admin/users" element={<ProtectedRoute requiredRole="admin"><AdminUsers /></ProtectedRoute>} />
+        <Route path="/admin/sellers" element={<ProtectedRoute requiredRole="admin"><AdminSellers /></ProtectedRoute>} />
+        <Route path="/admin/orders" element={<ProtectedRoute requiredRole="admin"><AdminOrders /></ProtectedRoute>} />
+        <Route path="/admin/revenue" element={<ProtectedRoute requiredRole="admin"><AdminRevenue /></ProtectedRoute>} />
+        <Route path="/admin/returns" element={<ProtectedRoute requiredRole="admin"><AdminReturns /></ProtectedRoute>} />
+        <Route path="/seller" element={<ProtectedRoute requiredRole="seller"><SellerHome /></ProtectedRoute>} />
+        <Route path="/seller/products" element={<ProtectedRoute requiredRole="seller"><SellerProducts /></ProtectedRoute>} />
+        <Route path="/seller/orders" element={<ProtectedRoute requiredRole="seller"><SellerOrders /></ProtectedRoute>} />
+        <Route path="/seller/revenue" element={<ProtectedRoute requiredRole="seller"><SellerRevenue /></ProtectedRoute>} />
+        <Route path="/seller/returns" element={<ProtectedRoute requiredRole="seller"><SellerReturns /></ProtectedRoute>} />
+        <Route path="/category/:categoryId" element={<ProtectedRoute><CategoryPage /></ProtectedRoute>} />
+        <Route path="/returns" element={<ProtectedRoute><UserReturns /></ProtectedRoute>} />
       </Routes>
     </BrowserRouter>
   );
