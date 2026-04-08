@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import com.rathnaproducts.backend.model.Product;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/api/products")
@@ -28,7 +30,7 @@ public class ProductController {
         String email = auth != null ? auth.getName() : null;
         
         if ("admin".equals(userType)) {
-            return ResponseEntity.ok(productService.getAllProducts());
+            return ResponseEntity.ok(productService.getAllProductsAdmin());
         } else if ("seller".equals(userType)) {
             if (sellerEmail != null && !sellerEmail.isEmpty()) {
                 return ResponseEntity.ok(productService.getProductsBySeller(sellerEmail));
@@ -74,7 +76,7 @@ public class ProductController {
     private String saveImage(MultipartFile file) {
         try {
             String fileName = java.util.UUID.randomUUID() + "_" + file.getOriginalFilename();
-            java.nio.file.Path uploadPath = java.nio.file.Paths.get("uploads/products/");
+            java.nio.file.Path uploadPath = java.nio.file.Paths.get("/var/www/rathnaproducts/uploads/products/");
             java.nio.file.Files.createDirectories(uploadPath);
             
             java.nio.file.Path filePath = uploadPath.resolve(fileName);
@@ -109,7 +111,8 @@ public class ProductController {
             @RequestParam(value = "returnDays", required = false, defaultValue = "0") Integer returnDays,
             @RequestParam(value = "replaceable", required = false, defaultValue = "false") Boolean replaceable,
             @RequestParam(value = "replacementDays", required = false, defaultValue = "0") Integer replacementDays,
-            @RequestParam(value = "cardColor", required = false, defaultValue = "#3B82F6") String cardColor) {
+            @RequestParam(value = "cardColor", required = false, defaultValue = "#3B82F6") String cardColor,
+            @RequestParam(value = "stockQuantity", required = false, defaultValue = "0") Integer stockQuantity) {
         
         try {
             ProductRequest request = new ProductRequest();
@@ -124,6 +127,7 @@ public class ProductController {
             request.setReplaceable(replaceable);
             request.setReplacementDays(replacementDays);
             request.setCardColor(cardColor);
+            request.setStockQuantity(stockQuantity);
             
             ProductResponse response = productService.createProduct(request, productImage);
             return ResponseEntity.ok(response);
@@ -132,15 +136,27 @@ public class ProductController {
         }
     }
 
-    @PostMapping("/{id}/upload-image")
-    public ResponseEntity<String> uploadProductImage(
+    @PostMapping("/{id}/upload-images")
+    public ResponseEntity<List<String>> uploadProductImages(
             @PathVariable Long id,
-            @RequestParam("image") MultipartFile image) {
+            @RequestParam("images") MultipartFile[] images) {
         try {
-            String imageUrl = productService.uploadProductImage(id, image);
-            return ResponseEntity.ok(imageUrl);
+            List<String> imageUrls = new ArrayList<>();
+            for (MultipartFile image : images) {
+                String imageUrl = saveImage(image);
+                imageUrls.add(imageUrl);
+            }
+            
+            Product product = productService.getProductEntityById(id);
+            if (product.getAdditionalImages() == null) {
+                product.setAdditionalImages(new ArrayList<>());
+            }
+            product.getAdditionalImages().addAll(imageUrls);
+            productService.saveProduct(product);
+            
+            return ResponseEntity.ok(imageUrls);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Failed to upload image: " + e.getMessage());
+            return ResponseEntity.badRequest().build();
         }
     }
 
@@ -166,7 +182,8 @@ public class ProductController {
             @RequestParam(value = "returnDays", required = false, defaultValue = "0") Integer returnDays,
             @RequestParam(value = "replaceable", required = false, defaultValue = "false") Boolean replaceable,
             @RequestParam(value = "replacementDays", required = false, defaultValue = "0") Integer replacementDays,
-            @RequestParam(value = "cardColor", required = false, defaultValue = "#3B82F6") String cardColor) {
+            @RequestParam(value = "cardColor", required = false, defaultValue = "#3B82F6") String cardColor,
+            @RequestParam(value = "stockQuantity", required = false) Integer stockQuantity) {
         
         try {
             ProductRequest request = new ProductRequest();
@@ -181,11 +198,44 @@ public class ProductController {
             request.setReplaceable(replaceable);
             request.setReplacementDays(replacementDays);
             request.setCardColor(cardColor);
+            if (stockQuantity != null) request.setStockQuantity(stockQuantity);
             
             ProductResponse response = productService.updateProduct(id, request, productImage);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/{id}/toggle-status")
+    public ResponseEntity<String> toggleProductStatus(
+            @PathVariable Long id,
+            @RequestBody java.util.Map<String, Object> request) {
+        try {
+            Boolean enabled = (Boolean) request.get("enabled");
+            String sellerEmail = (String) request.get("sellerEmail");
+            String userType = (String) request.get("userType");
+            
+            productService.toggleProductStatus(id, enabled, sellerEmail, userType);
+            return ResponseEntity.ok("Product status updated successfully");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/{id}/stock")
+    public ResponseEntity<String> updateStock(
+            @PathVariable Long id,
+            @RequestBody java.util.Map<String, Object> request) {
+        try {
+            Integer stockQuantity = (Integer) request.get("stockQuantity");
+            String sellerEmail = (String) request.get("sellerEmail");
+            String userType = (String) request.get("userType");
+            
+            productService.updateStock(id, stockQuantity, sellerEmail, userType);
+            return ResponseEntity.ok("Stock updated successfully");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 

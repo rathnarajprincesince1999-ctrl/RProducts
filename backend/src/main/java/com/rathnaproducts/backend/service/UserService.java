@@ -64,6 +64,7 @@ public class UserService {
     private UserProfileResponse mapToProfileResponse(User user) {
         UserProfileResponse response = new UserProfileResponse();
         response.setId(user.getId());
+        response.setUserId(user.getUserId());
         response.setName(user.getName());
         response.setEmail(user.getEmail());
         response.setPhone(user.getPhone());

@@ -34,6 +34,57 @@ public class Order {
     
     @Column(name = "rejection_reason")
     private String rejectionReason;
+    
+    @Column(name = "admin_approved")
+    private Boolean adminApproved = false;
+    
+    // Shipping details for Shiprocket
+    @Column(name = "package_weight")
+    private Double packageWeight;
+    
+    @Column(name = "package_length")
+    private Integer packageLength;
+    
+    @Column(name = "package_breadth")
+    private Integer packageBreadth;
+    
+    @Column(name = "package_height")
+    private Integer packageHeight;
+    
+    @Column(name = "shipped_at")
+    private LocalDateTime shippedAt;
+    
+    // Customer shipping details
+    @Column(name = "shipping_address", length = 500)
+    private String shippingAddress;
+    
+    @Column(name = "shipping_city")
+    private String shippingCity;
+    
+    @Column(name = "shipping_state")
+    private String shippingState;
+    
+    @Column(name = "shipping_pincode")
+    private String shippingPincode;
+    
+    @Column(name = "shipping_phone")
+    private String shippingPhone;
+    
+    @Column(name = "shipping_landmark")
+    private String shippingLandmark;
+    
+    // Shiprocket integration fields
+    @Column(name = "shiprocket_order_id")
+    private String shiprocketOrderId;
+    
+    @Column(name = "shiprocket_shipment_id")
+    private String shiprocketShipmentId;
+    
+    @Column(name = "awb_code")
+    private String awbCode;
+    
+    @Column(name = "courier_name")
+    private String courierName;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
@@ -45,7 +96,7 @@ public class Order {
     @JsonIgnoreProperties({"password"})
     private Seller seller;
     
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonIgnoreProperties({"order"})
     private List<OrderItem> orderItems;
 
@@ -94,4 +145,52 @@ public class Order {
     
     public String getRejectionReason() { return rejectionReason; }
     public void setRejectionReason(String rejectionReason) { this.rejectionReason = rejectionReason; }
+    
+    public Boolean getAdminApproved() { return adminApproved; }
+    public void setAdminApproved(Boolean adminApproved) { this.adminApproved = adminApproved; }
+    
+    public Double getPackageWeight() { return packageWeight; }
+    public void setPackageWeight(Double packageWeight) { this.packageWeight = packageWeight; }
+    
+    public Integer getPackageLength() { return packageLength; }
+    public void setPackageLength(Integer packageLength) { this.packageLength = packageLength; }
+    
+    public Integer getPackageBreadth() { return packageBreadth; }
+    public void setPackageBreadth(Integer packageBreadth) { this.packageBreadth = packageBreadth; }
+    
+    public Integer getPackageHeight() { return packageHeight; }
+    public void setPackageHeight(Integer packageHeight) { this.packageHeight = packageHeight; }
+    
+    public LocalDateTime getShippedAt() { return shippedAt; }
+    public void setShippedAt(LocalDateTime shippedAt) { this.shippedAt = shippedAt; }
+    
+    public String getShippingAddress() { return shippingAddress; }
+    public void setShippingAddress(String shippingAddress) { this.shippingAddress = shippingAddress; }
+    
+    public String getShippingCity() { return shippingCity; }
+    public void setShippingCity(String shippingCity) { this.shippingCity = shippingCity; }
+    
+    public String getShippingState() { return shippingState; }
+    public void setShippingState(String shippingState) { this.shippingState = shippingState; }
+    
+    public String getShippingPincode() { return shippingPincode; }
+    public void setShippingPincode(String shippingPincode) { this.shippingPincode = shippingPincode; }
+    
+    public String getShippingPhone() { return shippingPhone; }
+    public void setShippingPhone(String shippingPhone) { this.shippingPhone = shippingPhone; }
+    
+    public String getShippingLandmark() { return shippingLandmark; }
+    public void setShippingLandmark(String shippingLandmark) { this.shippingLandmark = shippingLandmark; }
+    
+    public String getShiprocketOrderId() { return shiprocketOrderId; }
+    public void setShiprocketOrderId(String shiprocketOrderId) { this.shiprocketOrderId = shiprocketOrderId; }
+    
+    public String getShiprocketShipmentId() { return shiprocketShipmentId; }
+    public void setShiprocketShipmentId(String shiprocketShipmentId) { this.shiprocketShipmentId = shiprocketShipmentId; }
+    
+    public String getAwbCode() { return awbCode; }
+    public void setAwbCode(String awbCode) { this.awbCode = awbCode; }
+    
+    public String getCourierName() { return courierName; }
+    public void setCourierName(String courierName) { this.courierName = courierName; }
 }

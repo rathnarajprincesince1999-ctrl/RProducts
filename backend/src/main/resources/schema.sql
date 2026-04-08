@@ -1,5 +1,12 @@
 -- Database schema for RATHNA Products profile management features
 
+-- Add reset token columns to users table for password reset functionality
+ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token VARCHAR(255);
+ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token_expiry TIMESTAMP;
+
+-- Add user_id column for display purposes (starts from 1)
+ALTER TABLE users ADD COLUMN IF NOT EXISTS user_id BIGINT UNIQUE;
+
 -- Create addresses table
 CREATE TABLE IF NOT EXISTS addresses (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -30,6 +37,29 @@ CREATE TABLE IF NOT EXISTS orders (
     payment_method VARCHAR(255),
     transaction_id VARCHAR(255),
     rejection_reason TEXT,
+    admin_approved BOOLEAN DEFAULT FALSE,
+    
+    -- Package details for shipping
+    package_weight DOUBLE,
+    package_length INTEGER,
+    package_breadth INTEGER,
+    package_height INTEGER,
+    shipped_at TIMESTAMP NULL,
+    
+    -- Customer shipping details
+    shipping_address VARCHAR(500),
+    shipping_city VARCHAR(255),
+    shipping_state VARCHAR(255),
+    shipping_pincode VARCHAR(10),
+    shipping_phone VARCHAR(20),
+    shipping_landmark VARCHAR(255),
+    
+    -- Shiprocket integration fields
+    shiprocket_order_id VARCHAR(255),
+    shiprocket_shipment_id VARCHAR(255),
+    awb_code VARCHAR(255),
+    courier_name VARCHAR(255),
+    
     user_id BIGINT NOT NULL,
     seller_id BIGINT,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
@@ -68,15 +98,18 @@ ALTER TABLE products ADD COLUMN IF NOT EXISTS replacement_days INTEGER DEFAULT 0
 ALTER TABLE products ADD COLUMN IF NOT EXISTS card_color VARCHAR(7) DEFAULT '#3B82F6';
 
 -- Add indexes for better performance
-CREATE INDEX idx_addresses_user_id ON addresses(user_id);
-CREATE INDEX idx_payments_user_id ON payments(user_id);
-CREATE INDEX idx_orders_user_id ON orders(user_id);
-CREATE INDEX idx_orders_seller_id ON orders(seller_id);
-CREATE INDEX idx_orders_status ON orders(status);
-CREATE INDEX idx_orders_created_at ON orders(created_at);
-CREATE INDEX idx_orders_delivered_at ON orders(delivered_at);
-CREATE INDEX idx_order_items_order_id ON order_items(order_id);
-CREATE INDEX idx_order_items_product_id ON order_items(product_id);
-CREATE INDEX idx_returns_order_id ON returns(order_id);
-CREATE INDEX idx_returns_product_id ON returns(product_id);
-CREATE INDEX idx_returns_status ON returns(status);
+CREATE INDEX IF NOT EXISTS idx_addresses_user_id ON addresses(user_id);
+CREATE INDEX IF NOT EXISTS idx_payments_user_id ON payments(user_id);
+CREATE INDEX IF NOT EXISTS idx_orders_user_id ON orders(user_id);
+CREATE INDEX IF NOT EXISTS idx_orders_seller_id ON orders(seller_id);
+CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
+CREATE INDEX IF NOT EXISTS idx_orders_created_at ON orders(created_at);
+CREATE INDEX IF NOT EXISTS idx_orders_delivered_at ON orders(delivered_at);
+CREATE INDEX IF NOT EXISTS idx_orders_admin_approved ON orders(admin_approved);
+CREATE INDEX IF NOT EXISTS idx_orders_shiprocket_order_id ON orders(shiprocket_order_id);
+CREATE INDEX IF NOT EXISTS idx_orders_awb_code ON orders(awb_code);
+CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON order_items(order_id);
+CREATE INDEX IF NOT EXISTS idx_order_items_product_id ON order_items(product_id);
+CREATE INDEX IF NOT EXISTS idx_returns_order_id ON returns(order_id);
+CREATE INDEX IF NOT EXISTS idx_returns_product_id ON returns(product_id);
+CREATE INDEX IF NOT EXISTS idx_returns_status ON returns(status);

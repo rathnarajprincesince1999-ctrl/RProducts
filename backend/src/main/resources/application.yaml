@@ -21,3 +21,9 @@ jwt:
 server:
     port: 8080
     address: 127.0.0.1 # Bind to IPv4 for Nginx proxy
+
+shiprocket:
+    email: rathnarajprince1999@gmail.com
+    password: OAhNj!$MGnR%kevyvvNJitjq9p%A8Tf
+    base-url: https://apiv2.shiprocket.in/v1/external
+    pickup-location: Primary

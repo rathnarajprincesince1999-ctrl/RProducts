@@ -30,8 +30,8 @@ public class ReturnController {
     @Autowired
     private ProductRepository productRepository;
 
-    @PostMapping("/returns")
-    public ResponseEntity<Return> createReturn(@RequestBody Map<String, Object> request) {
+    @PostMapping("/replacements")
+    public ResponseEntity<Return> createReplacement(@RequestBody Map<String, Object> request) {
         try {
             Long orderId = Long.valueOf(request.get("orderId").toString());
             String userEmail = request.get("userEmail").toString();
@@ -54,36 +54,36 @@ public class ReturnController {
                 return ResponseEntity.badRequest().build();
             }
 
-            // Check if return already exists for this order
-            List<Return> existingReturns = returnRepository.findByOrderOrderByCreatedAtDesc(order);
-            if (!existingReturns.isEmpty()) {
+            // Check if replacement already exists for this order
+            List<Return> existingReplacements = returnRepository.findByOrderOrderByCreatedAtDesc(order);
+            if (existingReplacements.stream().anyMatch(r -> "REPLACEMENT".equals(r.getType()))) {
                 return ResponseEntity.badRequest().build();
             }
 
-            // Create return for the first returnable product in the order
-            Product returnableProduct = null;
+            // Create replacement for the first replaceable product in the order
+            Product replaceableProduct = null;
             if (order.getOrderItems() != null) {
                 for (var item : order.getOrderItems()) {
-                    if (item.getProduct() != null && Boolean.TRUE.equals(item.getProduct().getReturnable())) {
-                        returnableProduct = item.getProduct();
+                    if (item.getProduct() != null && Boolean.TRUE.equals(item.getProduct().getReplaceable())) {
+                        replaceableProduct = item.getProduct();
                         break;
                     }
                 }
             }
 
-            if (returnableProduct == null) {
+            if (replaceableProduct == null) {
                 return ResponseEntity.badRequest().build();
             }
 
-            Return returnRequest = new Return();
-            returnRequest.setOrder(order);
-            returnRequest.setProduct(returnableProduct);
-            returnRequest.setType("RETURN");
-            returnRequest.setReason(reason);
-            returnRequest.setStatus("PENDING");
+            Return replacementRequest = new Return();
+            replacementRequest.setOrder(order);
+            replacementRequest.setProduct(replaceableProduct);
+            replacementRequest.setType("REPLACEMENT");
+            replacementRequest.setReason(reason);
+            replacementRequest.setStatus("PENDING");
 
-            Return savedReturn = returnRepository.save(returnRequest);
-            return ResponseEntity.ok(savedReturn);
+            Return savedReplacement = returnRepository.save(replacementRequest);
+            return ResponseEntity.ok(savedReplacement);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body(null);

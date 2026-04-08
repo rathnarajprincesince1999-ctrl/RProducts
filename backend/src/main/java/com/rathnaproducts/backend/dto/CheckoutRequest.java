@@ -21,6 +21,32 @@ public class CheckoutRequest {
     
     private String transactionId;
     
+    private String mode; // "simple" or "express"
+    
+    private ShippingDetails shippingDetails;
+    
+    @Data
+    public static class ShippingDetails {
+        @NotBlank(message = "Address is required")
+        private String address;
+        
+        @NotBlank(message = "City is required")
+        private String city;
+        
+        @NotBlank(message = "State is required")
+        private String state;
+        
+        @NotBlank(message = "Pincode is required")
+        private String pincode;
+        
+        @NotBlank(message = "Phone is required")
+        private String phone;
+        
+        private String landmark;
+        
+        private String addressType;
+    }
+    
     @Data
     public static class CheckoutItem {
         @NotNull(message = "Product ID is required")

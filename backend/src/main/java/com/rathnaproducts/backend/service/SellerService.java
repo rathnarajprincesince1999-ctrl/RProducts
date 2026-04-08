@@ -28,6 +28,12 @@ public class SellerService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
+    public List<SellerResponse> getAllSellers() {
+        return sellerRepository.findAll().stream()
+                .map(seller -> new SellerResponse(seller.getId(), seller.getUsername(), seller.getName(), seller.getEmail()))
+                .collect(Collectors.toList());
+    }
+
     public SellerResponse login(SellerRequest request) {
         try {
             System.out.println("Attempting seller login for username: " + request.getUsername());

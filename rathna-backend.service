@@ -1,0 +1,21 @@
+[Unit]
+Description=RATHNA Products Backend
+After=network.target mysql.service
+
+[Service]
+Type=simple
+User=rathna
+Group=rathna
+WorkingDirectory=/var/www/rathnaproducts/backend
+ExecStart=/usr/bin/java -jar -Dspring.profiles.active=prod /var/www/rathnaproducts/backend/rathna-backend.jar
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=rathna-backend
+
+Environment=JAVA_OPTS="-Xmx512m -Xms256m"
+Environment=SPRING_PROFILES_ACTIVE=prod
+
+[Install]
+WantedBy=multi-user.target

@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.ArrayList;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
@@ -28,6 +30,11 @@ public class Product {
     private BigDecimal price;
     
     private String productImageUrl;
+    
+    @ElementCollection
+    @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
+    @Column(name = "image_url")
+    private List<String> additionalImages = new ArrayList<>();
     
     public String getImageUrl() {
         return productImageUrl;
@@ -59,4 +66,10 @@ public class Product {
     
     @Column(name = "card_color")
     private String cardColor = "#3B82F6"; // Default blue color
+    
+    @Column(name = "stock_quantity")
+    private Integer stockQuantity = 0;
+    
+    @Column(name = "enabled")
+    private Boolean enabled = true;
 }

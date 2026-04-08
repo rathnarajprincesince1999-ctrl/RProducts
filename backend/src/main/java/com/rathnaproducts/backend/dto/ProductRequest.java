@@ -17,4 +17,6 @@ public class ProductRequest {
     private Integer replacementDays = 0;
     private String cardColor = "#3B82F6";
     private String productImageUrl;
+    private Integer stockQuantity = 0;
+    private Boolean enabled = true;
 }
